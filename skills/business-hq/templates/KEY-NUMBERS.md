@@ -18,3 +18,12 @@
 | Outside funding needed | | | | |
 | SAM (serviceable market) | | per year | | |
 | Year 1 revenue (base case) | | | | |
+| Average order value | | | | |
+| Landed cost per unit (products) | | | | |
+| Kept per unit after ads, main channel | | | | |
+| Break-even ROAS | | x | | |
+| Hourly or package rate (services) | | | | |
+| Monthly marketing budget | | | | |
+| Focus channels | | text | | |
+| Repeat purchase rate | | % | | |
+| Peak cash tied up in stock | | | | |

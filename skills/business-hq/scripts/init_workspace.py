@@ -26,10 +26,13 @@ DEPARTMENTS = [
     ("07-finance", "biz-finance-lead"),
     ("08-legal", "biz-legal-advisor"),
     ("09-marketing", "biz-marketing-lead"),
-    ("10-sales", "biz-sales-lead"),
-    ("11-operations", "biz-ops-lead"),
-    ("12-fundraising", "biz-fundraising-lead"),
-    ("13-review", "biz-red-team"),
+    ("10-content", "biz-content-lead"),
+    ("11-sales", "biz-sales-lead"),
+    ("12-commerce", "biz-commerce-lead"),
+    ("13-retention", "biz-retention-lead"),
+    ("14-operations", "biz-ops-lead"),
+    ("15-fundraising", "biz-fundraising-lead"),
+    ("16-review", "biz-red-team"),
 ]
 
 HQ_FILES = [
@@ -39,6 +42,7 @@ HQ_FILES = [
     "ASSUMPTIONS.md",
     "OPEN-QUESTIONS.md",
     "KEY-NUMBERS.md",
+    "ACTUALS.csv",
 ]
 
 TEMPLATES = Path(__file__).resolve().parent.parent / "templates"

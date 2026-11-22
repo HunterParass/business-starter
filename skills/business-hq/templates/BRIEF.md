@@ -13,6 +13,7 @@
 - Customer type: (consumers / businesses / both)
 - Stage: (idea / validating / building / launched / making revenue)
 - Mode: (quick-scan / full-build / single-department / operate)
+- Playbook(s): (primary + optional secondary from references/playbooks.md)
 
 ## Founder
 
@@ -41,6 +42,9 @@
 - Product or service:
 - Price idea:
 - How customers would find it and buy it:
+- Where it's sold: (online / in person / marketplaces / wholesale / mix)
+- Product or supplier status: (idea / prototype / supplier found / making it / selling it)
+- On camera: (happy to be the face / faceless content only / not sure)
 
 ## Changelog
 

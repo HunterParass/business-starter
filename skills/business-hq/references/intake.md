@@ -8,7 +8,7 @@ Extract everything the founder already said (idea, location, budget, skills) and
 
 ## Round 1: the shape of the business (AskUserQuestion, up to 4)
 
-1. **Business type**: SaaS or app / game / ecommerce or physical product / service or freelance / local business / marketplace / content or media.
+1. **Business type**: physical product / food or drink / local service / freelance or agency / software or app / game / creator or media / courses or coaching / shop, café or restaurant / other. Use the answer to pick the playbook in `playbooks.md`; ask a follow-up only if two playbooks fit equally.
 2. **Stage**: just an idea / validating / building / already selling.
 3. **Goal for the next 12 months**: learn and earn a bit / steady side income / replace a salary / build something venture-scale.
 4. **Starting budget**: under 500 / 500-2,000 / 2,000-10,000 / more (in their currency).
@@ -25,7 +25,18 @@ Extract everything the founder already said (idea, location, budget, skills) and
 1. **Evidence so far**: none / conversations / waitlist or pre-orders / paying customers.
 2. **First customer**: who exactly, in one line (free text).
 3. **Time to first revenue needed**: no rush / within 3 months / within 1 month.
-4. **Hard no's**: things they won't do (cold calling, paid ads, quitting school or work, taking investment).
+4. **Hard no's**: things they won't do (cold calling, paid ads, being on camera, quitting school or work, taking investment).
+
+## Playbook follow-ups (ask only the ones the playbook needs, inside the rounds above)
+
+| Playbook | Ask |
+|---|---|
+| Physical product, food, hardware, reselling | Do you have the product yet (idea / prototype / supplier found / already making it)? Where would you sell (online / in person / marketplaces / wholesale)? |
+| Anything where content will drive sales (products, food, creators, courses, games, personal services) | **On camera**: happy to be the face / faceless content only / not sure. This changes the whole content strategy. |
+| Local service, personal service, shop or café | Which area or neighbourhood do you serve? Do you have the tools, vehicle or space needed? |
+| Freelance, agency, courses | What can you point to as proof (past work, results, credentials)? |
+| Software, games | Can you build it yourself, or do you need someone? Which platform? |
+| Food | Making it at home or in a commercial kitchen? |
 
 ## Defaults when a question goes unanswered
 
@@ -37,7 +48,9 @@ Extract everything the founder already said (idea, location, budget, skills) and
 | Stage | idea | `[DEFAULT]` |
 | Jurisdiction | no default: leave Legal out of the wave and ask again at the next gate | `[MISSING]` |
 | Age bracket | 18 or older, and Legal adds a short under-18 section anyway | `[DEFAULT]` |
+| On camera | faceless content first, founder can step in later | `[DEFAULT]` |
+| Playbook | the closest match to the description; say which one and why | `[DEFAULT]` |
 
 ## Closing the intake
 
-Read back, in five lines: the one-liner, first customer, model guess, constraints (budget, hours, place), and the mode. Fix anything the founder corrects, update the brief's changelog, then start Wave 1.
+Read back, in six lines: the one-liner, first customer, model guess, constraints (budget, hours, place), the playbook, and the mode. Fix anything the founder corrects, update the brief's changelog, then start Wave 1.

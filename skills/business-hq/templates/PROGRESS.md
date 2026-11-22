@@ -3,6 +3,7 @@
 > HQ updates this after every phase so any new chat can resume exactly here.
 
 - Mode:
+- Playbook(s):
 - Current phase: 0 Setup
 - Last checkpoint: {{DATE}} workspace created
 - Next action: run intake
@@ -12,15 +13,17 @@
 | # | Phase | Status | Gate result | Date |
 |---|-------|--------|-------------|------|
 | 0 | Setup | done | | {{DATE}} |
-| 1 | Intake (HQ + founder) | todo | | |
+| 1 | Intake and playbook choice (HQ + founder) | todo | | |
 | 2 | Research wave (market, competitors, customers) | todo | | |
 | G1 | Go / Pivot / Kill gate | todo | | |
 | 3 | Customer discovery (real conversations) | todo | | |
 | 4 | Design wave (strategy, brand, product) | todo | | |
-| 5 | Build-out wave (finance, legal, marketing, sales, operations) | todo | | |
+| 5a | Build-out wave (finance, legal, marketing, operations, + sales, commerce per playbook) | todo | | |
+| 5b | Growth wave (content, retention per playbook) | todo | | |
 | 6 | Funding (only if the plan needs outside money) | todo | | |
 | 7 | Red-team review | todo | | |
 | 8 | Launch plan and handover | todo | | |
+| 9 | Operate: monthly plan-vs-actual check-ins | todo | | |
 
 ## Departments
 
@@ -35,7 +38,10 @@
 | Finance | biz-finance-lead | 07-finance | | | |
 | Legal | biz-legal-advisor | 08-legal | | | |
 | Marketing | biz-marketing-lead | 09-marketing | | | |
-| Sales | biz-sales-lead | 10-sales | | | |
-| Operations | biz-ops-lead | 11-operations | | | |
-| Fundraising | biz-fundraising-lead | 12-fundraising | | | |
-| Red team | biz-red-team | 13-review | | | |
+| Content and social | biz-content-lead | 10-content | | | |
+| Sales | biz-sales-lead | 11-sales | | | |
+| Commerce | biz-commerce-lead | 12-commerce | | | |
+| Retention | biz-retention-lead | 13-retention | | | |
+| Operations | biz-ops-lead | 14-operations | | | |
+| Fundraising | biz-fundraising-lead | 15-fundraising | | | |
+| Red team | biz-red-team | 16-review | | | |

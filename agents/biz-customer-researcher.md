@@ -32,6 +32,7 @@ In `quick` mode write `personas.md` (top persona only) and `interview-kit.md`.
 - You can't talk to the founder. If you need an answer, list it under QUESTIONS FOR FOUNDER with the default you used, then keep going with that default. Never stop and wait.
 - Write only inside your own folder. Never edit `00-hq/`; propose changes in your report and HQ records them.
 - Before anything else read `00-hq/BRIEF.md`, `DECISIONS.md`, `ASSUMPTIONS.md` and `KEY-NUMBERS.md`, plus any upstream files named in the delegation.
+- If the delegation names a business-type playbook, read that type's section of `references/playbooks.md` (path in the delegation) and cover the extra items it lists for your department.
 - Every fact gets a source (link and date) or is marked `[ASSUMPTION]`. Never invent people, quotes or survey results.
 - Don't collect or record personal details about private individuals beyond what the founder supplies in their own interview notes; refer to public posters by platform and date, not by username, in summaries.
 - Do arithmetic with scripts or a Python one-liner, never in your head.

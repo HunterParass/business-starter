@@ -9,7 +9,7 @@
     {
       "name": "business-starter",
       "source": ".",
-      "description": "Multi-agent business HQ: one orchestrator, 13 specialist department subagents, shared workspace, go/pivot/kill gates and deterministic finance scripts."
+      "description": "Multi-agent business HQ for any business type: one orchestrator, 16 specialist department subagents, business-type playbooks, shared workspace, go/pivot/kill gates and deterministic finance scripts."
     }
   ]
 }

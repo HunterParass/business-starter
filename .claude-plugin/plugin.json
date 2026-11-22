@@ -1,8 +1,8 @@
 {
   "name": "business-starter",
   "displayName": "Business Starter",
-  "version": "1.0.0",
-  "description": "Start a business from scratch with a multi-agent HQ: the main chat orchestrates 13 specialist department subagents (market, competitors, customers, strategy, brand, product, finance, legal, marketing, sales, operations, fundraising, red team) through research, go/pivot/kill gates, design, build-out and review, with deterministic scripts for every number.",
+  "version": "1.1.0",
+  "description": "Start and run any kind of business with a multi-agent HQ: the main chat orchestrates 16 specialist department subagents (market, competitors, customers, strategy, brand, product, finance, legal, marketing, content and social, sales, commerce, retention, operations, fundraising, red team), tailored by 16 business-type playbooks, with go/pivot/kill gates and deterministic scripts for every number.",
   "author": {
     "name": "HunterParass",
     "url": "https://github.com/HunterParass"
@@ -10,5 +10,20 @@
   "homepage": "https://github.com/HunterParass/business-starter",
   "repository": "https://github.com/HunterParass/business-starter",
   "license": "MIT",
-  "keywords": ["business", "startup", "founder", "entrepreneur", "business-plan", "multi-agent", "orchestration", "financial-model", "go-to-market"]
+  "keywords": [
+    "business",
+    "business-plan",
+    "content-creation",
+    "ecommerce",
+    "entrepreneur",
+    "financial-model",
+    "founder",
+    "go-to-market",
+    "multi-agent",
+    "orchestration",
+    "small-business",
+    "social-media",
+    "startup",
+    "tiktok"
+  ]
 }

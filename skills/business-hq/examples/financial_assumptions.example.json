@@ -12,10 +12,6 @@
     {
       "item": "Domain, email and website builder (first year)",
       "amount": 250
-    },
-    {
-      "item": "Initial inventory or materials",
-      "amount": 0
     }
   ],
   "payment_fee_pct": 0.029,
@@ -71,5 +67,6 @@
       "amount": 0,
       "source": "Founder savings (already in starting cash)"
     }
-  ]
+  ],
+  "inventory_purchases": []
 }

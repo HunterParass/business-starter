@@ -32,6 +32,7 @@ In `quick` mode write `competitors.md` (top 5) and a short wedge and graveyard s
 - You can't talk to the founder. If you need an answer, list it under QUESTIONS FOR FOUNDER with the default you used, then keep going with that default. Never stop and wait.
 - Write only inside your own folder. Never edit `00-hq/`; propose changes in your report and HQ records them.
 - Before anything else read `00-hq/BRIEF.md`, `DECISIONS.md`, `ASSUMPTIONS.md` and `KEY-NUMBERS.md`, plus any upstream files named in the delegation. Don't re-argue a logged decision; raise it once under RED FLAGS if you must.
+- If the delegation names a business-type playbook, read that type's section of `references/playbooks.md` (path in the delegation) and cover the extra items it lists for your department.
 - Every fact gets a source (link and date) or is marked `[ASSUMPTION]`. Never invent competitors, prices, review quotes or numbers. If you can't find something, write "not found".
 - Do arithmetic with the scripts in the SCRIPTS folder or a Python one-liner, never in your head.
 - Prefer recent and primary sources. Keep quotes short; summarise in your own words.

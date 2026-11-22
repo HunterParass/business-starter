@@ -13,6 +13,11 @@ customers you expect to win, churn, costs, hires, funding) and this builds:
 The Python calculation and the spreadsheet formulas follow the same logic, so
 the summary matches what the spreadsheet shows.
 
+Product businesses: list stock you buy ahead of sales in "inventory_purchases"
+([{"month": 1, "amount": 2000, "note": "first batch"}]). Cash leaves when you
+buy; cost of goods is drawn from that stock until it runs out. This is what
+shows the cash crunch that minimum order quantities cause.
+
 Usage:
     python3 financial_model.py assumptions.json --out business/07-finance
     python3 financial_model.py --template > assumptions.json
@@ -47,7 +52,6 @@ TEMPLATE = {
     "startup_costs": [
         {"item": "Business name registration", "amount": 60},
         {"item": "Domain, email and website builder (first year)", "amount": 250},
-        {"item": "Initial inventory or materials", "amount": 0},
     ],
     "payment_fee_pct": 0.029,
     "tax_rate": 0.0,
@@ -64,6 +68,7 @@ TEMPLATE = {
     "marketing": {"monthly_budget": 250, "monthly_growth": 0.02, "start_month": 1},
     "team": [{"role": "Part-time contractor", "monthly": 600, "start_month": 13}],
     "funding": [{"month": 1, "amount": 0, "source": "Founder savings (already in starting cash)"}],
+    "inventory_purchases": [],
 }
 
 
@@ -131,6 +136,7 @@ def normalise(raw: dict) -> dict:
             raise ValueError(f"{w}type must be 'recurring' or 'one_time'")
         if a["revenue_streams"][-1]["price"] is None or a["revenue_streams"][-1]["volume1"] is None:
             raise ValueError(f"{w}price and month-1 volume are required")
+        a["revenue_streams"][-1]["start"] = int(_n(s, "start_month", 1, 1, where=w))
 
     a["fixed_costs"] = [
         {"item": str(c.get("item", "")), "monthly": _n(c, "monthly", 0.0, 0, where="fixed_costs: "),
@@ -149,6 +155,13 @@ def normalise(raw: dict) -> dict:
         {"month": int(_n(f, "month", 1, 1, where="funding: ")), "amount": _n(f, "amount", 0.0, where="funding: "),
          "source": str(f.get("source", ""))}
         for f in raw.get("funding", [])
+    ]
+    # Stock bought ahead of sales. Cash leaves when bought; cost of goods is then
+    # drawn from stock on hand until it runs out (after that, COGS is paid as sold).
+    a["inventory_purchases"] = [
+        {"month": int(_n(p, "month", 1, 1, where="inventory_purchases: ")),
+         "amount": _n(p, "amount", 0.0, 0, where="inventory_purchases: "), "note": str(p.get("note", ""))}
+        for p in raw.get("inventory_purchases", [])
     ]
     return a
 
@@ -173,7 +186,8 @@ def simulate(a: dict) -> dict:
     revenue_keys, cogs_parts, new_rec_keys, active_keys = [], [], [], []
 
     for s in a["revenue_streams"]:
-        vol = [s["volume1"] * (1 + s["growth"]) ** (m - 1) for m in ms]
+        st = s.get("start", 1)
+        vol = [s["volume1"] * (1 + s["growth"]) ** (m - st) if m >= st else 0.0 for m in ms]
         if s["cap"] is not None:
             vol = [min(v, s["cap"]) for v in vol]
         if s["type"] == "recurring":
@@ -218,7 +232,14 @@ def simulate(a: dict) -> dict:
     funding = [sum(f["amount"] for f in a["funding"] if f["month"] == m) for m in ms]
     startup_total = sum(c["amount"] for c in a["startup_costs"])
     startup = [startup_total if m == 1 else 0.0 for m in ms]
-    ncf = [net[i] + funding[i] - startup[i] for i in range(n)]
+    inv_buy = [sum(p["amount"] for p in a["inventory_purchases"] if p["month"] == m) for m in ms]
+    inv_used, inv_bal, bal = [], [], 0.0
+    for i in range(n):
+        used = min(bal + inv_buy[i], cogs[i])
+        bal = bal + inv_buy[i] - used
+        inv_used.append(used)
+        inv_bal.append(bal)
+    ncf = [net[i] + funding[i] - startup[i] - inv_buy[i] + inv_used[i] for i in range(n)]
     cash, prev = [], a["starting_cash"]
     for x in ncf:
         prev += x
@@ -227,7 +248,9 @@ def simulate(a: dict) -> dict:
     lines.update({
         "Total revenue": total_rev, "Cost of goods": cogs, "Payment fees": fees, "Gross profit": gp,
         "Total operating expenses": opex, "Operating profit": op, "Tax": tax, "Net profit": net,
-        "Funding received": funding, "Startup costs": startup, "Net cash flow": ncf, "Ending cash": cash,
+        "Funding received": funding, "Startup costs": startup,
+        "Inventory purchased": inv_buy, "Inventory used (already paid)": inv_used, "Inventory on hand": inv_bal,
+        "Net cash flow": ncf, "Ending cash": cash,
     })
 
     # sustained break-even: first month from which operating profit never goes negative again
@@ -253,8 +276,14 @@ def simulate(a: dict) -> dict:
         "funding_needed": max(0.0, -low),
         "ending_cash": cash[-1],
         "ending_active_customers": sum(lines[k][-1] for k in active_keys) if active_keys else None,
-        "blended_cac": (total_mkt / new_rec_total) if new_rec_total > 0 else None,
+        # Only meaningful when every stream is a subscription; one-off buyers aren't counted as customers.
+        "blended_cac": (total_mkt / new_rec_total)
+        if new_rec_total > 0 and all(s["type"] == "recurring" for s in a["revenue_streams"]) else None,
         "startup_costs_total": startup_total,
+        "inventory_purchased_total": sum(inv_buy),
+        "peak_inventory": max(inv_bal) if inv_bal else 0.0,
+        "ending_inventory": inv_bal[-1] if inv_bal else 0.0,
+        "avg_monthly_cogs_last3": sum(cogs[-3:]) / min(3, n),
         "years": years,
     }
     return {"lines": lines, "summary": summary, "revenue_keys": revenue_keys, "opex_keys": opex_keys,
@@ -331,7 +360,7 @@ def build_xlsx(a: dict, path: Path, scenario_results: dict) -> None:
         for row in rows:
             for j, v in enumerate(row, 1):
                 c = A.cell(r, j, v)
-                if j > 1 or title.startswith("Funding"):
+                if j > 1 or title.startswith(("Funding", "Inventory")):
                     c.font = blue
                 if fmts[j - 1] and isinstance(v, (int, float)):
                     c.number_format = fmts[j - 1]
@@ -348,11 +377,12 @@ def build_xlsx(a: dict, path: Path, scenario_results: dict) -> None:
     stream_rows = []
     for s in a["revenue_streams"]:
         stream_rows.append([s["name"], s["type"], s["price"], s["volume1"], s["growth"],
-                            s["cap"] if s["cap"] is not None else "", s["churn"], s["cogs_pct"]])
+                            s["cap"] if s["cap"] is not None else "", s["churn"], s["cogs_pct"], s.get("start", 1)])
     s0, _ = table("Revenue streams",
-                  ["Name", "Type", "Price", "Month-1 volume (new customers or units)", "Monthly growth",
-                   "Max per month (blank = no cap)", "Monthly churn (recurring only)", "Cost of goods %"],
-                  stream_rows, [None, None, money, count, pct, count, pct, pct])
+                  ["Name", "Type", "Price", "Volume in start month (new customers or units)", "Monthly growth",
+                   "Max per month (blank = no cap)", "Monthly churn (recurring only)", "Cost of goods %",
+                   "Start month #"],
+                  stream_rows, [None, None, money, count, pct, count, pct, pct, None])
 
     fc_rows = [[c["item"], c["monthly"], c["start"]] for c in a["fixed_costs"]]
     fc0 = table("Fixed monthly costs", ["Item", "Monthly", "Start month #"], fc_rows, [None, money, None])[0] if fc_rows else None
@@ -362,9 +392,14 @@ def build_xlsx(a: dict, path: Path, scenario_results: dict) -> None:
     fd0, fd1 = table("Funding received", ["Month #", "Amount", "Source"], fd_rows, [None, money, None])
     ref["fund_months"] = f"Assumptions!$A${fd0}:$A${fd1}"
     ref["fund_amounts"] = f"Assumptions!$B${fd0}:$B${fd1}"
+    iv_rows = [[p["month"], p["amount"], p["note"]] for p in a["inventory_purchases"]] or [["", 0, "(none: no stock bought ahead)"]]
+    iv0, iv1 = table("Inventory purchases (stock bought ahead of sales)", ["Month #", "Amount", "Note"], iv_rows,
+                     [None, money, None])
+    ref["inv_months"] = f"Assumptions!$A${iv0}:$A${iv1}"
+    ref["inv_amounts"] = f"Assumptions!$B${iv0}:$B${iv1}"
 
     A.column_dimensions["A"].width = 44
-    for col in "BCDEFGH":
+    for col in "BCDEFGHI":
         A.column_dimensions[col].width = 18
 
     # ---- Model sheet
@@ -404,8 +439,10 @@ def build_xlsx(a: dict, path: Path, scenario_results: dict) -> None:
         ar = s0 + k
         price, vol1, g, cap, churn, cg = (f"Assumptions!$C${ar}", f"Assumptions!$D${ar}", f"Assumptions!$E${ar}",
                                           f"Assumptions!$F${ar}", f"Assumptions!$G${ar}", f"Assumptions!$H${ar}")
-        vol = lambda col, i, vol1=vol1, g=g, cap=cap: (  # noqa: E731
-            f'=IF({cap}="",{vol1}*(1+{g})^({col}$1-1),MIN({vol1}*(1+{g})^({col}$1-1),{cap}))')
+        stm = f"Assumptions!$I${ar}"
+        vol = lambda col, i, vol1=vol1, g=g, cap=cap, stm=stm: (  # noqa: E731
+            f'=IF({col}$1<{stm},0,IF({cap}="",{vol1}*(1+{g})^({col}$1-{stm}),'
+            f'MIN({vol1}*(1+{g})^({col}$1-{stm}),{cap})))')
         if s["type"] == "recurring":
             nr = add(f"{s['name']}: new customers", vol, count)
             act = mr
@@ -449,7 +486,20 @@ def build_xlsx(a: dict, path: Path, scenario_results: dict) -> None:
     npr = add("Net profit", lambda col, i: f"={col}{opr}-{col}{txr}", is_bold=True)
     fdr = add("Funding received", lambda col, i: f"=SUMIF({ref['fund_months']},{col}$1,{ref['fund_amounts']})")
     sur = add("Startup costs", lambda col, i: f"=IF({col}$1=1,{ref['startup_total']},0)")
-    ncr = add("Net cash flow", lambda col, i: f"={col}{npr}+{col}{fdr}-{col}{sur}")
+    ipr = add("Inventory purchased", lambda col, i: f"=SUMIF({ref['inv_months']},{col}$1,{ref['inv_amounts']})")
+    iur = mr
+    ihr = mr + 1
+
+    def inv_used(col, i):
+        prev_bal = "0" if i == 0 else f"{L(i + 1)}{ihr}"
+        return f"=MIN({prev_bal}+{col}{ipr},{col}{cr})"
+
+    def inv_hand(col, i):
+        prev_bal = "0" if i == 0 else f"{L(i + 1)}{ihr}"
+        return f"={prev_bal}+{col}{ipr}-{col}{iur}"
+    add("Inventory used (already paid)", inv_used)
+    add("Inventory on hand", inv_hand)
+    ncr = add("Net cash flow", lambda col, i: f"={col}{npr}+{col}{fdr}-{col}{sur}-{col}{ipr}+{col}{iur}")
     chr_ = mr
 
     def cash(col, i):
@@ -486,9 +536,11 @@ def build_xlsx(a: dict, path: Path, scenario_results: dict) -> None:
         ("First month # cash goes negative", f'=IFERROR(MATCH(TRUE,{rng(ngr)},0),"Never")', "General"),
         ("Ending cash", f"=Model!${last}${chr_}", money),
         ("Total startup costs", f"={ref['startup_total']}", money),
+        ("Peak cash tied up in stock", f"=MAX({rng(ihr)})", money),
     ]
     if new_rows:
         items.append(("Ending active subscribers", "=" + "+".join(f"Model!${last}${x}" for x in active_rows), count))
+    if new_rows and all(s["type"] == "recurring" for s in a["revenue_streams"]):
         items.append(("Blended CAC (marketing / new subscribers)",
                       f'=IFERROR(SUM({rng(rows["Marketing"])})/SUM({rng(nrt)}),"n/a")', money))
     sr = 4
@@ -566,9 +618,14 @@ def summary_md(a: dict, results: dict) -> str:
     out.append(f"| Cash first goes negative | {('month ' + str(b['first_negative_cash_month'])) if b['first_negative_cash_month'] else 'never'} |")
     out.append(f"| Ending cash | {money_fmt(b['ending_cash'], cur)} |")
     out.append(f"| One-time startup costs | {money_fmt(b['startup_costs_total'], cur)} |")
+    if b["inventory_purchased_total"] > 0:
+        out.append(f"| Stock bought ahead of sales (total) | {money_fmt(b['inventory_purchased_total'], cur)} |")
+        out.append(f"| Peak cash tied up in stock | {money_fmt(b['peak_inventory'], cur)} |")
+        out.append(f"| Unsold stock at end | {money_fmt(b['ending_inventory'], cur)} |")
     if b["ending_active_customers"] is not None:
         out.append(f"| Ending active subscribers | {b['ending_active_customers']:,.0f} |")
-        out.append(f"| Blended CAC | {money_fmt(b['blended_cac'], cur)} |")
+        if b["blended_cac"] is not None:
+            out.append(f"| Blended CAC | {money_fmt(b['blended_cac'], cur)} |")
     out += ["", "| Year | Revenue | Net profit | Ending cash |", "|---|---|---|---|"]
     for y in b["years"]:
         out.append(f"| {y['year']} | {money_fmt(y['revenue'], cur)} | {money_fmt(y['net_profit'], cur)} | {money_fmt(y['ending_cash'], cur)} |")
@@ -588,6 +645,9 @@ def summary_md(a: dict, results: dict) -> str:
         warnings.append(f"Low case needs {money_fmt(lo['funding_needed'], cur)}: the plan is fragile if growth disappoints.")
     if b["break_even_month"] is None:
         warnings.append("Base case never becomes sustainably profitable inside the model window.")
+    if b["ending_inventory"] > 0 and b["ending_inventory"] > 3 * b["avg_monthly_cogs_last3"]:
+        warnings.append(f"Unsold stock at the end ({money_fmt(b['ending_inventory'], cur)}) is more than 3 months "
+                        "of cost of goods: purchases are outrunning sales. Buy smaller batches more often.")
     rec_prices = [s["price"] for s in a["revenue_streams"] if s["type"] == "recurring"]
     if b["blended_cac"] is not None and rec_prices and b["blended_cac"] < min(rec_prices):
         warnings.append(
@@ -597,7 +657,8 @@ def summary_md(a: dict, results: dict) -> str:
     if warnings:
         out += ["", "## Warnings"] + [f"- {w}" for w in warnings]
     out += ["", "Simplifications: tax is a flat rate on positive monthly operating profit; no sales tax, "
-                "depreciation, payment timing or inventory carrying. Fine for planning, not for filing."]
+                "depreciation or customer payment terms; stock bought ahead is used up before new cost of goods "
+                "is paid as sold. Fine for planning, not for filing."]
     return "\n".join(out)
 
 

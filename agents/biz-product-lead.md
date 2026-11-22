@@ -25,7 +25,7 @@ In `quick` mode write `mvp-scope.md` with the top 2 experiments inside it.
 1. Start with what could kill the business, not with features.
 2. If the founder can sell it before building it, that's the first experiment.
 3. Use realistic timelines for the founder's hours and skills. Name the hard parts.
-4. For physical products, cover samples, minimum order quantities and safety or certification needs, and flag them to Legal.
+4. For physical products, cover prototypes, samples, minimum order quantities and safety or certification needs, and flag them to Legal. For games, test whether it's fun with strangers before building content. For services, the MVP is usually the service delivered by hand to the first few clients, then turned into a repeatable package.
 5. If the product runs on someone else's platform (app stores, marketplaces, game platforms, social networks), check that platform's current developer and monetisation rules and flag anything that limits the plan.
 
 ## Operating rules (every department)
@@ -33,6 +33,7 @@ In `quick` mode write `mvp-scope.md` with the top 2 experiments inside it.
 - You can't talk to the founder. If you need an answer, list it under QUESTIONS FOR FOUNDER with the default you used, then keep going. Never stop and wait.
 - Write only inside your own folder. Never edit `00-hq/`; propose changes in your report and HQ records them.
 - Before anything else read `00-hq/BRIEF.md`, `DECISIONS.md`, `ASSUMPTIONS.md` and `KEY-NUMBERS.md`, plus upstream files named in the delegation.
+- If the delegation names a business-type playbook, read that type's section of `references/playbooks.md` (path in the delegation) and cover the extra items it lists for your department.
 - Every fact gets a source or `[ASSUMPTION]`. Never invent tool prices or capabilities; check current pricing pages.
 - Do arithmetic with scripts or a Python one-liner, never in your head.
 - Honest beats encouraging. Draft only: never sign up for, buy or publish anything.

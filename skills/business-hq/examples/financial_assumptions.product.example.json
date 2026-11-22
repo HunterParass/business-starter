@@ -1,0 +1,107 @@
+{
+  "company": "Example Candle Co (product business example)",
+  "currency": "CAD",
+  "months": 24,
+  "start_month": "2027-03",
+  "starting_cash": 3000,
+  "startup_costs": [
+    {
+      "item": "Business name registration",
+      "amount": 60
+    },
+    {
+      "item": "Website plan and domain (first year)",
+      "amount": 400
+    },
+    {
+      "item": "Equipment: pouring pots, scale, thermometer",
+      "amount": 250
+    },
+    {
+      "item": "Product photos (DIY setup)",
+      "amount": 80
+    }
+  ],
+  "payment_fee_pct": 0.03,
+  "tax_rate": 0.0,
+  "revenue_streams": [
+    {
+      "name": "Online orders",
+      "type": "one_time",
+      "price": 28,
+      "units_month1": 25,
+      "monthly_growth": 0.1,
+      "max_units_per_month": 250,
+      "cogs_pct": 0.32
+    },
+    {
+      "name": "Wholesale to local shops",
+      "type": "one_time",
+      "price": 14,
+      "units_month1": 24,
+      "monthly_growth": 0.08,
+      "max_units_per_month": 120,
+      "cogs_pct": 0.62,
+      "start_month": 4
+    },
+    {
+      "name": "Candle club subscription",
+      "type": "recurring",
+      "price": 24,
+      "new_customers_month1": 2,
+      "monthly_growth": 0.08,
+      "max_new_per_month": 20,
+      "monthly_churn": 0.09,
+      "cogs_pct": 0.38,
+      "start_month": 6
+    }
+  ],
+  "fixed_costs": [
+    {
+      "item": "Website plan",
+      "monthly": 39,
+      "start_month": 1
+    },
+    {
+      "item": "Packaging design software",
+      "monthly": 15,
+      "start_month": 1
+    },
+    {
+      "item": "Market booth fees",
+      "monthly": 80,
+      "start_month": 3
+    }
+  ],
+  "marketing": {
+    "monthly_budget": 200,
+    "monthly_growth": 0.03,
+    "start_month": 1
+  },
+  "team": [
+    {
+      "role": "Part-time packing help",
+      "monthly": 500,
+      "start_month": 10
+    }
+  ],
+  "funding": [
+    {
+      "month": 1,
+      "amount": 0,
+      "source": "Founder savings (already in starting cash)"
+    }
+  ],
+  "inventory_purchases": [
+    {
+      "month": 1,
+      "amount": 1800,
+      "note": "First wax, wick, jar and label order at minimum order quantity"
+    },
+    {
+      "month": 6,
+      "amount": 2500,
+      "note": "Restock before the autumn season"
+    }
+  ]
+}
