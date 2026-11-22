@@ -1,0 +1,50 @@
+{
+  "idea": "Inventory alerts for independent cafes",
+  "scores": {
+    "problem_severity": {
+      "score": 4,
+      "evidence": "medium",
+      "note": "How painful, frequent and urgent is the problem for the first segment?"
+    },
+    "willingness_to_pay": {
+      "score": 3,
+      "evidence": "weak",
+      "note": "Is there evidence this segment pays (or would pay) enough to matter?"
+    },
+    "distribution_access": {
+      "score": 4,
+      "evidence": "medium",
+      "note": "Can the founder reach the first 100 customers cheaply and repeatably?"
+    },
+    "market_size": {
+      "score": 3,
+      "evidence": "medium",
+      "note": "Is the serviceable market big enough for the founder's goal?"
+    },
+    "competition_and_wedge": {
+      "score": 3,
+      "evidence": "medium",
+      "note": "Is there a clear wedge versus what customers use today?"
+    },
+    "founder_fit": {
+      "score": 4,
+      "evidence": "strong",
+      "note": "Do the founder's skills, access and time fit this business?"
+    },
+    "feasibility": {
+      "score": 4,
+      "evidence": "strong",
+      "note": "Can a first version be built with the budget, skills and time available?"
+    },
+    "unit_economics": {
+      "score": 3,
+      "evidence": "weak",
+      "note": "Can each customer plausibly be worth more than it costs to win and serve?"
+    },
+    "risk_and_regulation": {
+      "score": 5,
+      "evidence": "medium",
+      "note": "Are legal, safety and platform risks manageable? (5 = low risk)"
+    }
+  }
+}

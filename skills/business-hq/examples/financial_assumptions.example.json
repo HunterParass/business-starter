@@ -1,0 +1,75 @@
+{
+  "company": "Example Co",
+  "currency": "CAD",
+  "months": 36,
+  "start_month": "2027-01",
+  "starting_cash": 1500,
+  "startup_costs": [
+    {
+      "item": "Business name registration",
+      "amount": 60
+    },
+    {
+      "item": "Domain, email and website builder (first year)",
+      "amount": 250
+    },
+    {
+      "item": "Initial inventory or materials",
+      "amount": 0
+    }
+  ],
+  "payment_fee_pct": 0.029,
+  "tax_rate": 0.0,
+  "revenue_streams": [
+    {
+      "name": "Monthly plan",
+      "type": "recurring",
+      "price": 12,
+      "new_customers_month1": 3,
+      "monthly_growth": 0.08,
+      "max_new_per_month": 40,
+      "monthly_churn": 0.07,
+      "cogs_pct": 0.1
+    },
+    {
+      "name": "One-off setup service",
+      "type": "one_time",
+      "price": 150,
+      "units_month1": 1,
+      "monthly_growth": 0.05,
+      "max_units_per_month": 6,
+      "cogs_pct": 0.2
+    }
+  ],
+  "fixed_costs": [
+    {
+      "item": "Software tools",
+      "monthly": 40,
+      "start_month": 1
+    },
+    {
+      "item": "Accounting software",
+      "monthly": 25,
+      "start_month": 4
+    }
+  ],
+  "marketing": {
+    "monthly_budget": 250,
+    "monthly_growth": 0.02,
+    "start_month": 1
+  },
+  "team": [
+    {
+      "role": "Part-time contractor",
+      "monthly": 600,
+      "start_month": 13
+    }
+  ],
+  "funding": [
+    {
+      "month": 1,
+      "amount": 0,
+      "source": "Founder savings (already in starting cash)"
+    }
+  ]
+}

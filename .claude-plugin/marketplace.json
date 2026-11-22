@@ -1,0 +1,15 @@
+{
+  "name": "business-starter",
+  "description": "Business Starter: a multi-agent HQ for starting a business from scratch in Claude Code.",
+  "owner": {
+    "name": "HunterParass",
+    "url": "https://github.com/HunterParass"
+  },
+  "plugins": [
+    {
+      "name": "business-starter",
+      "source": ".",
+      "description": "Multi-agent business HQ: one orchestrator, 13 specialist department subagents, shared workspace, go/pivot/kill gates and deterministic finance scripts."
+    }
+  ]
+}

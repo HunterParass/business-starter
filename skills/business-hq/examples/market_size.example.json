@@ -1,0 +1,13 @@
+{
+  "currency": "CAD",
+  "uncertainty_pct": 0.3,
+  "segments": [
+    {"name": "Independent cafes in Ontario", "customers": 6000, "annual_value": 600,
+     "serviceable_pct": 0.4, "obtainable_pct_year3": 0.03,
+     "source": "Replace with a real source: government business counts, industry association data"},
+    {"name": "Small bakeries in Ontario", "customers": 2500, "annual_value": 480,
+     "serviceable_pct": 0.3, "obtainable_pct_year3": 0.02, "source": ""}
+  ],
+  "top_down": {"total_market_value": 40000000, "relevant_pct": 0.1, "source": "Replace with an industry report"},
+  "capacity_check": {"max_new_customers_per_month": 4, "months": 36}
+}

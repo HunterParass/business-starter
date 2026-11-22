@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.DS_Store
+# A workspace created while testing the plugin inside this repo
+/business/
