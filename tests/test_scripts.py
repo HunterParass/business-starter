@@ -290,6 +290,124 @@ class PlanVsActual(unittest.TestCase):
         self.assertEqual(p.stdout, (SKILL / "templates" / "ACTUALS.csv").read_text())
 
 
+class IdeaLens(unittest.TestCase):
+    def idea(self, **kw):
+        base = {"id": "X", "name": "x", "ease": 4, "money_ceiling": 3, "stickiness": 3, "ai_share": 0.5,
+                "setup_price": 1000, "monthly_price": 100, "sales_hours_per_client": 5, "setup_hours": 5,
+                "monthly_hours": 1, "new_clients": [1, 1, 1], "monthly_churn": 0.0, "local_competition": "low"}
+        base.update(kw)
+        return base
+
+    def test_q1_simulation(self):
+        import idea_lens as il
+        r = il.evaluate([self.idea()], 14)[0]
+        # setup 1,000 x 3 + monthly 100 x (0 + 1 + 2) = 3,300; hours 10 x 3 + 1 x (0 + 1 + 2) = 33
+        self.assertAlmostEqual(r["q1"]["q1_revenue"], 3300)
+        self.assertAlmostEqual(r["q1"]["q1_hours"], 33)
+        self.assertAlmostEqual(r["q1"]["mrr_after_q1"], 300)
+        self.assertEqual(r["scores"]["first_quarter"], 3)
+        self.assertEqual(r["scores"]["ai_compatibility"], 3)
+        self.assertAlmostEqual(r["lens_score"], (3.5 + 3 + 3 + 3) / 4, delta=0.01)
+
+    def test_hours_cap(self):
+        import idea_lens as il
+        r = il.evaluate([self.idea(setup_hours=55, new_clients=[5, 5, 5])], 14)[0]
+        self.assertTrue(r["q1"]["capped_by_hours"])
+        self.assertLess(r["q1"]["q1_new_clients"], 15)
+        self.assertTrue(all(m["hours"] <= m["hours_available"] + 1e-9 for m in r["q1"]["months"]))
+
+    def test_quadrants_and_validation(self):
+        import idea_lens as il
+        self.assertEqual(il.quadrant(4, 4), "Sweet spot (easy and big)")
+        self.assertEqual(il.quadrant(5, 2), "Starter cash (easy, capped)")
+        self.assertEqual(il.quadrant(2, 5), "Hard but big")
+        self.assertEqual(il.quadrant(3, 3), "Middle (moderate on both)")
+        self.assertEqual(il.quadrant(3, 2), "Avoid (hard and capped)")
+        with self.assertRaises(ValueError):
+            il.evaluate([self.idea(ai_share=1.5)], 14)
+        with self.assertRaises(ValueError):
+            il.evaluate([self.idea(new_clients=[1, 2])], 14)
+
+    def test_cli_and_same_ramp(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "ideas.json"
+            f.write_text(json.dumps({"ideas": [self.idea(id="A", new_clients=[5, 5, 5], setup_hours=1),
+                                               self.idea(id="B", new_clients=[0, 0, 1])]}))
+            p = run(str(SCRIPTS / "idea_lens.py"), str(f), "--hours", "14", "--json")
+            self.assertEqual(p.returncode, 0, p.stderr)
+            rows = {r["id"]: r for r in json.loads(p.stdout)}
+            self.assertGreater(rows["A"]["q1"]["q1_revenue"], rows["B"]["q1"]["q1_revenue"])
+            p = run(str(SCRIPTS / "idea_lens.py"), str(f), "--hours", "14", "--json", "--same-ramp", "1,1,1")
+            rows = {r["id"]: r for r in json.loads(p.stdout)}
+            self.assertAlmostEqual(rows["A"]["q1"]["q1_revenue"], rows["B"]["q1"]["q1_revenue"])
+            p = run(str(SCRIPTS / "idea_lens.py"), str(f), "--hours", "14", "--same-ramp", "1,1")
+            self.assertNotEqual(p.returncode, 0)
+            self.assertIn("same-ramp", p.stderr)
+
+
+class DomainCheck(unittest.TestCase):
+    BOOT = json.dumps({"services": [[["com", "net"], ["http://rdap.example/com/", "https://rdap.example/com/"]],
+                                    [["ca"], ["https://rdap.example/ca"]]]})
+
+    def setUp(self):
+        import domain_check as dc
+        self.dc = dc
+        self.tmp = tempfile.TemporaryDirectory()
+        self.old_cache = dc.CACHE
+        dc.CACHE = Path(self.tmp.name) / "boot.json"
+
+    def tearDown(self):
+        self.dc.CACHE = self.old_cache
+        self.tmp.cleanup()
+
+    def fake(self, answers):
+        calls = []
+
+        def fetch(url, timeout=10.0):
+            calls.append(url)
+            if url == self.dc.BOOTSTRAP_URL:
+                return 200, self.BOOT
+            ans = answers.get(url.rsplit("/", 1)[1])
+            if isinstance(ans, Exception):
+                raise ans
+            return ans if ans else (404, "")
+        return fetch, calls
+
+    def test_expand_and_validate(self):
+        dc = self.dc
+        self.assertEqual(dc.expand(["BrightFix", "https://www.shop.ca/x", "brightfix"], ["com", "ca"]),
+                         ["brightfix.com", "brightfix.ca", "shop.ca"])
+        for bad in ["-bad", "bad-", "no spaces", "a..com"]:
+            with self.assertRaises(ValueError):
+                dc.expand([bad], ["com"])
+
+    def test_statuses_and_https_base(self):
+        body = json.dumps({"events": [{"eventAction": "registration", "eventDate": "2019-03-01T00:00:00Z"},
+                                      {"eventAction": "expiration", "eventDate": "2027-03-01T00:00:00Z"}]})
+        fetch, calls = self.fake({"taken.com": (200, body), "flaky.com": TimeoutError(), "odd.com": (503, "")})
+        rows = {r["domain"]: r for r in self.dc.check(["taken.com", "free.ca", "flaky.com", "odd.com", "x.zz"], fetch, pause=0)}
+        self.assertEqual(rows["taken.com"]["status"], "registered")
+        self.assertIn("2019-03-01", rows["taken.com"]["detail"])
+        self.assertEqual(rows["free.ca"]["status"], "not registered")
+        self.assertEqual(rows["flaky.com"]["status"], "unknown")
+        self.assertEqual(rows["odd.com"]["status"], "unknown")
+        self.assertEqual(rows["x.zz"]["status"], "unknown")
+        self.assertIn("https://rdap.example/com/domain/taken.com", calls)
+        self.assertIn("https://rdap.example/ca/domain/free.ca", calls)
+
+    def test_no_bootstrap_falls_back_and_flags(self):
+        def fetch(url, timeout=10.0):
+            if url == self.dc.BOOTSTRAP_URL:
+                raise OSError("offline")
+            return 404, ""
+        r = self.dc.check(["my-shop4you.com"], fetch, pause=0)[0]
+        self.assertEqual(r["status"], "not registered")
+        self.assertIn("rdap.org", r["source"])
+        self.assertTrue(any("hyphen" in f for f in r["flags"]) and any("number" in f for f in r["flags"]))
+        md = self.dc.to_md([r])
+        self.assertIn("CIPO", md)
+
+
 class Workspace(unittest.TestCase):
     def test_init_is_idempotent_and_never_overwrites(self):
         with tempfile.TemporaryDirectory() as d:
@@ -330,6 +448,23 @@ class PluginStructure(unittest.TestCase):
             self.assertIn(name, skill)
             body = (ROOT / "agents" / f"{name}.md").read_text(encoding="utf-8")
             self.assertIn("references/playbooks.md", body, f"{name} must read its playbook section")
+
+    def test_marketplace_bundle_and_pins(self):
+        m = json.loads((ROOT / ".claude-plugin" / "marketplace.json").read_text())
+        names = [p["name"] for p in m["plugins"]]
+        self.assertEqual(len(names), len(set(names)))
+        manifest = json.loads((ROOT / ".claude-plugin" / "plugin.json").read_text())
+        self.assertIn(manifest["name"], names)
+        bundle = json.loads((ROOT / "bundles" / "business-suite" / ".claude-plugin" / "plugin.json").read_text())
+        for dep in bundle["dependencies"]:
+            self.assertIn(dep, names, f"bundle depends on {dep}, which the marketplace doesn't list")
+        for p in m["plugins"]:
+            src = p["source"]
+            if isinstance(src, str):
+                self.assertTrue((ROOT / src / ".claude-plugin" / "plugin.json").exists(), p["name"])
+            else:
+                self.assertRegex(src.get("sha", ""), r"^[0-9a-f]{40}$", f"{p['name']} must be pinned to a reviewed commit")
+                self.assertTrue(p.get("license"), p["name"])
 
     def test_agent_folders_match_workspace(self):
         import re

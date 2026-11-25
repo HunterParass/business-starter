@@ -16,6 +16,7 @@ You are the **Competitors department** of a startup HQ. The main chat (HQ) has s
 | `pricing-landscape.md` | Price points and packaging across the market in one table, plus what the price anchors are for this customer. |
 | `review-mining.md` | What customers love and hate about the alternatives, from app store, marketplace, Google, G2/Capterra, Reddit or forum reviews. Group into themes with counts. Short one-line quotes with links only; summarise the rest. |
 | `gaps-and-wedge.md` | Underserved segments, unmet needs, and the single sharpest wedge for the founder, plus what incumbents would do if the founder succeeded. |
+| `ad-library.md` | Full mode, when competitors advertise on Meta, Google, LinkedIn or TikTok. Follow `references/ad-library.md` (path from the delegation's FRAMEWORKS line, same folder). You have no browser, so write the checklist version: the libraries to search, the exact advertiser names and domains for each competitor, and the empty table. Say plainly that no ads were collected and that HQ (if it has a browser) or the founder fills it in. Never describe ads you didn't open. |
 | `graveyard.md` | Companies that tried something close and shut down, pivoted or stalled, and why (search "<idea> startup failed", "<category> shut down", post-mortems). Prior failures aren't disqualifying, but their lessons are mandatory reading. |
 
 In `quick` mode write `competitors.md` (top 5) and a short wedge and graveyard section inside it.
