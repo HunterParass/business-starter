@@ -1,6 +1,6 @@
 {
   "name": "business-starter",
-  "description": "Business Starter: a multi-agent HQ for starting a business from scratch in Claude Code.",
+  "description": "Business Starter and the plugins worth having alongside it, reviewed and pinned to tested commits.",
   "owner": {
     "name": "HunterParass",
     "url": "https://github.com/HunterParass"
@@ -9,7 +9,116 @@
     {
       "name": "business-starter",
       "source": ".",
-      "description": "Multi-agent business HQ for any business type: one orchestrator, 16 specialist department subagents, business-type playbooks, shared workspace, go/pivot/kill gates and deterministic finance scripts."
+      "description": "Multi-agent business HQ for any business type: one orchestrator, 16 specialist department subagents, business-type playbooks, idea scan and founder lens, shared workspace, go/pivot/kill gates and deterministic finance scripts.",
+      "category": "business"
+    },
+    {
+      "name": "business-suite",
+      "source": "./bundles/business-suite",
+      "description": "Installs the toolkit in one go: business-starter, Anthropic's docx, xlsx, pptx and pdf skills, and context7 (live docs).",
+      "category": "business"
+    },
+    {
+      "name": "docx",
+      "source": {
+        "source": "git-subdir",
+        "url": "anthropics/skills",
+        "path": "skills/docx",
+        "sha": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba"
+      },
+      "description": "Create and edit Word documents. Anthropic's docx skill only (from anthropics/skills), Apache-2.0.",
+      "author": {
+        "name": "Anthropic"
+      },
+      "homepage": "https://github.com/anthropics/skills",
+      "license": "Apache-2.0",
+      "category": "documents"
+    },
+    {
+      "name": "xlsx",
+      "source": {
+        "source": "git-subdir",
+        "url": "anthropics/skills",
+        "path": "skills/xlsx",
+        "sha": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba"
+      },
+      "description": "Create and edit Excel spreadsheets with working formulas. Anthropic's xlsx skill only (from anthropics/skills), Apache-2.0.",
+      "author": {
+        "name": "Anthropic"
+      },
+      "homepage": "https://github.com/anthropics/skills",
+      "license": "Apache-2.0",
+      "category": "documents"
+    },
+    {
+      "name": "pptx",
+      "source": {
+        "source": "git-subdir",
+        "url": "anthropics/skills",
+        "path": "skills/pptx",
+        "sha": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba"
+      },
+      "description": "Create and edit PowerPoint decks. Anthropic's pptx skill only (from anthropics/skills), Apache-2.0.",
+      "author": {
+        "name": "Anthropic"
+      },
+      "homepage": "https://github.com/anthropics/skills",
+      "license": "Apache-2.0",
+      "category": "documents"
+    },
+    {
+      "name": "pdf",
+      "source": {
+        "source": "git-subdir",
+        "url": "anthropics/skills",
+        "path": "skills/pdf",
+        "sha": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba"
+      },
+      "description": "Create, fill, merge, split and read PDFs. Anthropic's pdf skill only (from anthropics/skills), Apache-2.0.",
+      "author": {
+        "name": "Anthropic"
+      },
+      "homepage": "https://github.com/anthropics/skills",
+      "license": "Apache-2.0",
+      "category": "documents"
+    },
+    {
+      "name": "context7",
+      "source": {
+        "source": "git-subdir",
+        "url": "upstash/context7",
+        "path": "plugins/claude/context7",
+        "sha": "6335fd8458bb942205c24c8b89e8bc97b0950804"
+      },
+      "description": "Upstash Context7: up-to-date library and platform docs (for example Shopify themes) pulled into the session through a hosted MCP server. MIT.",
+      "homepage": "https://github.com/upstash/context7",
+      "license": "MIT",
+      "category": "development"
+    },
+    {
+      "name": "superpowers",
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers",
+        "sha": "22f0b463e7a5e579904dd6211a520321035526f7"
+      },
+      "description": "Optional, for coding work: plan-first, test-driven development and debugging skills by Jesse Vincent. Adds a rule to every session that pushes skill use, so install it per project. MIT.",
+      "homepage": "https://github.com/obra/superpowers",
+      "license": "MIT",
+      "category": "development"
+    },
+    {
+      "name": "small-business",
+      "source": {
+        "source": "git-subdir",
+        "url": "anthropics/knowledge-work-plugins",
+        "path": "small-business",
+        "sha": "5e504ae11498f2b8daa30d86b7dab97b2ecd8092"
+      },
+      "description": "Optional, once the business is running: Anthropic's operations skills for invoices, bills, cash flow, payroll prep, inbox, reviews and posting. Apache-2.0.",
+      "homepage": "https://github.com/anthropics/knowledge-work-plugins",
+      "license": "Apache-2.0",
+      "category": "business"
     }
   ]
 }

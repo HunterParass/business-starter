@@ -34,14 +34,41 @@
 
 ## Install
 
-In Claude Code:
+In Claude Code, add the marketplace once:
 
 ```
 /plugin marketplace add HunterParass/business-starter
+```
+
+Then either install the whole toolkit in one go:
+
+```
+/plugin install business-suite@business-starter
+```
+
+or just the HQ:
+
+```
 /plugin install business-starter@business-starter
 ```
 
-Restart Claude Code and the skill and agents are available.
+Restart Claude Code (or run `/reload-plugins`) and everything is available.
+
+### What's in the marketplace
+
+The marketplace is the "mega skill": one place to install everything worth having for a business, without stuffing it all into one skill (a skill is picked by a short description and loads its whole instruction file, so one giant skill triggers badly and bloats every task). HQ knows when to hand work to each plugin. Third-party plugins are fetched from their own repos at commits that were reviewed and test-installed, not copied into this repo.
+
+| Plugin | In `business-suite` | What it adds | License |
+|---|---|---|---|
+| `business-starter` | yes | The HQ skill and 16 department agents | MIT |
+| `docx`, `xlsx`, `pptx`, `pdf` | yes | Anthropic's document skills, so HQ can hand you proposals, contracts and one-pagers as Word or PDF, decks as PowerPoint, trackers as Excel. Only these four from [anthropics/skills](https://github.com/anthropics/skills); the rest of that repo (art, Slack GIFs, Anthropic's own brand guidelines) isn't useful for your business | Apache-2.0 |
+| `context7` | yes | [Upstash Context7](https://github.com/upstash/context7): current docs for libraries and platforms (Shopify themes, Stripe, site frameworks) whenever code gets written. A hosted MCP server; your library questions go to context7.com | MIT |
+| `superpowers` | no, optional | [obra/superpowers](https://github.com/obra/superpowers): plan-first, test-driven coding workflow. It adds a "use skills before anything" rule to every session, so install it in coding projects only (`--scope project`) | MIT |
+| `small-business` | no, optional | Anthropic's [operations skills](https://github.com/anthropics/knowledge-work-plugins) for once you're running: invoices, bills, cash flow, payroll prep, inbox, reviews, posting. HQ's Operate mode routes day-to-day tasks to it | Apache-2.0 |
+
+Not included, on purpose:
+- **claude-mem**: a background worker and local database that records your sessions. HQ's `00-hq/` files already carry the business from session to session, and Claude Code has its own memory. Install it yourself if you want it.
+- **Most of [awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills)**: the business skills there are short prompts with no tools behind them (the domain brainstormer claims to check availability but can't; the ads extractor claims to scrape ad libraries with no browser), and the rest is developer tooling. Their two good ideas are rebuilt properly here: `domain_check.py` asks the domain registries directly, and the ad library scan uses a real browser or says it didn't look.
 
 **Manual install** (no plugin system):
 
@@ -59,6 +86,7 @@ Just describe what you want. The skill triggers on things like:
 
 - "I want to start a candle business and sell on TikTok. Is it worth doing?"
 - "I have an idea for a meal-prep service for night-shift nurses"
+- "I want to start something with AI where I live, but I don't have an idea yet. I have 2 hours a day and $5k"
 - "Help me start a lawn care business in my neighbourhood this summer"
 - "Give me a month of TikTok scripts for my crochet shop"
 - "Build me a full business plan for an indie mobile game studio"
@@ -71,6 +99,7 @@ Or call it directly with `/business-starter:business-hq`.
 
 | Mode | What happens | Cost |
 |---|---|---|
+| **Idea scan** | No idea yet? 3 departments hunt for real problems (local businesses, people and groups, services proven elsewhere), then every idea is ranked on the founder lens: idiot index (ease x money), first-quarter income and clients against your real hours, stickiness, and how much AI can do. Top ideas get the scorecard | low-medium |
 | **Quick scan** | 3 research departments, then the scorecard and a one-page verdict | low |
 | **Full build** | Every department your playbook needs, in waves with gates, ending in an executive summary and a this-week / 30 / 60 / 90-day launch plan | high |
 | **Single department** | One deliverable, e.g. a month of video scripts, pricing, or a financial model | low |
@@ -126,6 +155,8 @@ All in `skills/business-hq/scripts/`, each with `--help`:
 | `pricing_calc.py` | `product`: what you keep per unit on every sales channel, break-even ROAS, price for a target margin. `service`: hourly, day and package rate from an income target |
 | `financial_model.py` | Monthly driver-based model: live-formula `.xlsx`, CSV, scenarios, `--sensitivity`, streams that start later, stock bought ahead of sales |
 | `plan_vs_actual.py` | Real monthly results vs the plan, with drift flags |
+| `domain_check.py` | Asks each domain registry (RDAP) whether names are registered, across the TLDs you choose, with name-quality flags and the trademark and business-name checks still to do |
+| `idea_lens.py` | Founder lens for ranking ideas: idiot index quadrant, simulated first-quarter revenue and clients capped by your weekly hours, stickiness, AI share; `--same-ramp` compares ideas on equal client ramps |
 
 Run the tests with `python3 -m unittest discover tests -v`. If LibreOffice is installed, the suite also recalculates the generated spreadsheets and checks every cell against the Python calculation.
 

@@ -1,0 +1,26 @@
+{
+  "name": "business-suite",
+  "version": "1.0.0",
+  "description": "One install for the business toolkit: Business Starter HQ, Anthropic's Word, Excel, PowerPoint and PDF skills, and Context7 live docs.",
+  "author": {
+    "name": "HunterParass",
+    "url": "https://github.com/HunterParass"
+  },
+  "homepage": "https://github.com/HunterParass/business-starter",
+  "repository": "https://github.com/HunterParass/business-starter",
+  "license": "MIT",
+  "keywords": [
+    "business",
+    "bundle",
+    "startup",
+    "documents"
+  ],
+  "dependencies": [
+    "business-starter",
+    "docx",
+    "xlsx",
+    "pptx",
+    "pdf",
+    "context7"
+  ]
+}
